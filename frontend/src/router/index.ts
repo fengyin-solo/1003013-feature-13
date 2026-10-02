@@ -21,6 +21,8 @@ const Electricbill = () => import('@/views/electricbill/index.vue')
 const Demolition = () => import('@/views/demolition/index.vue')
 const Emergency = () => import('@/views/emergency/index.vue')
 const Energyeff = () => import('@/views/energyeff/index.vue')
+const EnergyeffAccept = () => import('@/views/energyeff/accept.vue')
+const EnergyeffDetail = () => import('@/views/energyeff/detail.vue')
 
 const router = createRouter({
   history: createWebHistory(),
@@ -46,6 +48,8 @@ const router = createRouter({
     { path: '/demolition', name: 'demolition', component: Demolition },
     { path: '/emergency', name: 'emergency', component: Emergency },
     { path: '/energyeff', name: 'energyeff', component: Energyeff },
+    { path: '/energyeff/:id/accept', name: 'energyeff-accept', component: EnergyeffAccept },
+    { path: '/energyeff/:id', name: 'energyeff-detail', component: EnergyeffDetail },
   ],
 })
 

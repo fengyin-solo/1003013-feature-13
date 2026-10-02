@@ -5,14 +5,25 @@
 """
 from __future__ import annotations
 
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.routers import ROUTERS
+from app.services.energyeff import migrate_legacy_accepted
 from app.store import store
 
-app = FastAPI(title="通信基站运维管理平台", version="1.0.0")
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    # 节电率/回收期口径调整后：已验收项目按实测重算，当初结论原样留档。
+    migrate_legacy_accepted(store)
+    yield
+
+
+app = FastAPI(title="通信基站运维管理平台", version="1.0.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,

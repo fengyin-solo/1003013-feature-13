@@ -258,13 +258,17 @@ class EmergencyEntry(BaseModel):
     field_7: str | None = None  # 保障状态
 
 class EnergyeffEntry(BaseModel):
-    """节能项目明细结构。"""
+    """节能项目明细结构。
+
+    实测节电率与投资回收期不在登记时落字段，由 service 按基准期/观察期实测数据统一计算，
+    列表与详情共用同一口径（见 app.services.energyeff.compute_metrics）。
+    """
 
     field_0: str | None = None  # 项目编号
     field_1: str | None = None  # 所属站点
     field_2: str | None = None  # 改造内容
     field_3: str | None = None  # 预估节电率
-    field_4: str | None = None  # 投资金额
+    field_4: str | None = None  # 立项投资金额
     field_5: str | None = None  # 承包单位
-    field_6: str | None = None  # 投资回收期
+    field_6: str | None = None  # 投资回收期（验收后按实测重算）
     field_7: str | None = None  # 项目状态
