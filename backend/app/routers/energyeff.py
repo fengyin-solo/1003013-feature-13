@@ -12,7 +12,7 @@ router = APIRouter(prefix="/api/energyeff", tags=["节能改造"])
 
 service = EnergyeffService()
 
-LIST_FIELDS = ["项目编号", "所属站点", "改造内容", "预估节电率", "投资金额", "承包单位", "投资回收期", "项目状态"]
+LIST_FIELDS = ["项目编号", "所属站点", "改造内容", "预估节电率", "实测节电率", "实际投资", "投资回收期", "项目状态"]
 STATUSES = ["待立项", "改造中", "评估中", "已验收"]
 
 
@@ -28,6 +28,13 @@ def list_entries(
         raise HTTPException(status_code=400, detail="每页最多 200 条，请缩小分页范围")
     items, total = service.list_entries(keyword=keyword, status=status, page=page, size=size)
     return PageResult(items=items, total=total, page=page, size=size)
+
+
+@router.get("/export")
+def export_entries() -> dict[str, Any]:
+    """导出节能改造清单：返回当前过滤条件下的全量数据。"""
+    items, total = service.list_entries(page=1, size=10000)
+    return {"module": "energyeff", "total": total, "items": items}
 
 
 @router.get("/{entry_id}", response_model=dict)
@@ -50,16 +57,9 @@ def create_entry(payload: EntryPayload) -> ActionResult:
 
 @router.post("/{entry_id}/actions", response_model=ActionResult)
 def run_action(entry_id: int, payload: EntryPayload) -> ActionResult:
-    """对单条节能项目执行申请立项、开始改造、验收评估；不允许的动作会被拦下并说明原因。"""
+    """对单条节能项目执行申请立项、开始改造、验收评估；验收评估要带上观察期用电等实测数据。"""
     action = str(payload.values.get("action") or "").strip()
-    entry, message = service.run_action(entry_id, action)
+    entry, message = service.run_action(entry_id, action, payload.values)
     if entry is None:
         return ActionResult(ok=False, message=message)
     return ActionResult(ok=True, message=message, entry=entry)
-
-
-@router.get("/export")
-def export_entries() -> dict[str, Any]:
-    """导出节能改造清单：返回当前过滤条件下的全量数据。"""
-    items, total = service.list_entries(page=1, size=10000)
-    return {"module": "energyeff", "total": total, "items": items}

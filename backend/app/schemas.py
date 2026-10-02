@@ -264,7 +264,7 @@ class EnergyeffEntry(BaseModel):
     field_1: str | None = None  # 所属站点
     field_2: str | None = None  # 改造内容
     field_3: str | None = None  # 预估节电率
-    field_4: str | None = None  # 投资金额
-    field_5: str | None = None  # 承包单位
+    field_4: str | None = None  # 实测节电率
+    field_5: str | None = None  # 实际投资
     field_6: str | None = None  # 投资回收期
     field_7: str | None = None  # 项目状态
